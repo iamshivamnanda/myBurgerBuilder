@@ -1,0 +1,10 @@
+.BurgerBuilder{
+    
+}
+
+@media (min-width:1000px) {
+    .BurgerBuilder{
+        display: flex;
+justify-content: center;
+}
+}
