@@ -40,6 +40,8 @@
         color: white;
         border-bottom: 4px solid transparent;
         padding: 1rem 0.6rem;
+        height: 100%;
+    box-sizing: border-box;
        
     }
     

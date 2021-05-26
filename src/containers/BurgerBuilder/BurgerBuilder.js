@@ -1,13 +1,12 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import * as actionTypes from '../../store/actions/actions';
+import * as burgerbuilderactions from '../../store/actions/index';
 import Burger from "../../components/Burger/Burger";
 import BuildControls from "../../components/Burger/BuildControls/BuildControls";
 import Modal from "../../components/UI/Modal/Modal";
 import OrderSummary from "../../components/Burger/OrderSummary/OrderSummary";
 import classes from "./BurgerBuilder.module.css";
 import axios from "../../axios-orders";
-import Spinner from "../../components/UI/Spinner/Spinner";
 import witherrorhandler from "../../hoc/witherrorhandler/witherrorhandler";
 
 class BurgerBuilder extends Component {
@@ -16,10 +15,10 @@ class BurgerBuilder extends Component {
   state = {
     purchaseable: false,
     purchasing: false,
-    showspinner: false,
   };
 
   purchasehandler = () => {
+    this.props.onInitPurchase();
     this.setState({ purchasing: true });
   };
 
@@ -58,10 +57,6 @@ class BurgerBuilder extends Component {
         purchasecancel={this.purchaseclosehandler}
       ></OrderSummary>
     );
-    if (this.state.showspinner) {
-      ordersummary = <Spinner></Spinner>;
-    }
-
     const modal = this.state.purchasing ? (
       <Modal show={this.state.purchasing} closed={this.purchaseclosehandler}>
         {ordersummary}
@@ -87,13 +82,14 @@ class BurgerBuilder extends Component {
 }
 
 const mapStateToProps = (state) => {
-  return { ings: state.ingredients ,price:state.totalprice };
+  return { ings: state.burgerbuilder.ingredients ,price:state.burgerbuilder.totalprice };
 };
 
 const mapDispatchToProps = (dispatch)=>{
   return {
-    onIngredientAdd:(name)=> dispatch({type:actionTypes.ADDINGREDIENT,ingredientName:name}),
-    onIngredientDel:(name)=> dispatch({type:actionTypes.DELINGREDIENT,ingredientName:name}),
+    onIngredientAdd:(name)=> dispatch(burgerbuilderactions.addingredient(name)),
+    onIngredientDel:(name)=> dispatch(burgerbuilderactions.delingredient(name)),
+    onInitPurchase : ()=> dispatch(burgerbuilderactions.purchaseinit())
   }
 }
 

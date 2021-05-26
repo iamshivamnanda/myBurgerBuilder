@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import CheckoutSummary from "../../components/CheckoutSummary/CheckoutSummary";
-import { Route } from "react-router-dom";
+import { Route,Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 
 import ContactData from "../ContactData/ContactData";
@@ -17,8 +17,10 @@ class checkout extends Component {
   };
 
   render() {
+    const purchaseable = this.props.purchaseable ? <Redirect to="/" />:null;
     return (
       <div>
+        {purchaseable}
         <CheckoutSummary
           ingredients={this.props.ings}
           checkoutcancel={this.checkoutcancelhandler}
@@ -35,7 +37,8 @@ class checkout extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    ings: state.ingredients,
+    ings: state.burgerbuilder.ingredients,
+    purchaseable:state.order.purchaseable
   };
 };
 

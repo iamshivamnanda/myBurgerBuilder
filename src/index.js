@@ -3,12 +3,19 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import {Provider} from 'react-redux';
-import { createStore } from 'redux';
+import { createStore , applyMiddleware, compose ,combineReducers } from 'redux';
 import reportWebVitals from './reportWebVitals';
+import thunk from 'redux-thunk'
 
 import reducer from './store/reducers/reducer';
+import orderreducer from './store/reducers/order';
 
-const store = createStore(reducer);
+const rootreducer = combineReducers({
+  burgerbuilder:reducer,
+  order:orderreducer
+})
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const store = createStore(rootreducer, /* preloadedState, */ composeEnhancers(applyMiddleware(thunk)));
 
 ReactDOM.render(
   <Provider store={store}>
