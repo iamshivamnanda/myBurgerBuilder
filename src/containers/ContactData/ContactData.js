@@ -50,6 +50,7 @@ import * as actions from "../../store/actions/index";
           required:true,
           minlenght:5,
           maxlenght:5,
+          isNumeric:true
         },
         valid:false,
         touched:false
@@ -75,7 +76,8 @@ import * as actions from "../../store/actions/index";
         },
         value: "",
         validation:{
-          required:true
+          required:true,
+          isEmail:true
         },
         valid:false,
         touched:false
@@ -104,10 +106,11 @@ import * as actions from "../../store/actions/index";
     const order = {
       ingredients: this.props.ings,
       price: this.props.price,
-      orderdata:formdata
+      orderdata:formdata,
+      userId:this.props.userId
     };
 
-    this.props.onOrderBurger(order);
+    this.props.onOrderBurger(order,this.props.authtoken);
    
   };
 
@@ -122,6 +125,16 @@ import * as actions from "../../store/actions/index";
     if(rules.maxlenght){
       isvalid = value.length <=rules.maxlenght && isvalid;
     }
+    if (rules.isEmail) {
+      const pattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+      isvalid = pattern.test(value) && isvalid
+  }
+
+  if (rules.isNumeric) {
+      const pattern = /^\d+$/;
+      isvalid = pattern.test(value) && isvalid
+  }
+
     return isvalid
   }
 
@@ -183,13 +196,15 @@ import * as actions from "../../store/actions/index";
 const mapStateToProps = (state)=>{
  return{ ings:state.burgerbuilder.ingredients,
   price:state.burgerbuilder.totalprice,
-  loading:state.order.loading
+  loading:state.order.loading,
+  authtoken:state.auth.idToken,
+  userId:state.auth.userId
  }
 }
 
 const mapDispatchToProps = (dispatch)=>{
   return {
-    onOrderBurger:(orderData)=>dispatch(actions.burgerpurchase(orderData))
+    onOrderBurger:(orderData,authtoken)=>dispatch(actions.burgerpurchase(orderData,authtoken))
   }
 }
 

@@ -8,16 +8,21 @@ const witherrorhandler = (WrappedComponet,axios)=>{
         state ={
             error:null
         };
-        componentDidMount(){
-            axios.interceptors.request.use(req=>{
+        componentWillMount(){
+            this.reqInterceptor =   axios.interceptors.request.use(req=>{
                 this.setState({error:null});
                 return req;
 
             });
-            axios.interceptors.response.use(null,err=>{
-                this.setState({error:err});
+            this.reqInterceptor =   axios.interceptors.response.use(null,err=>{
+                console.log(err.response.statusText);
+                this.setState({error:err.response.statusText});
                 return err;
             })
+        }
+        componentWillUnmount () {
+            axios.interceptors.request.eject( this.reqInterceptor );
+            axios.interceptors.response.eject( this.resInterceptor );
         }
         closeerror =()=>{
             this.setState({error:null});
@@ -27,7 +32,7 @@ const witherrorhandler = (WrappedComponet,axios)=>{
             return (
                 <React.Fragment>
                     <Modal show={this.state.error} closed={this.closeerror} >
-                     {this.state.error ? this.state.error.message :null}
+                     {this.state.error ? this.state.error :null}
                     </Modal>
                     <WrappedComponet {...this.props}  />
                 </React.Fragment>

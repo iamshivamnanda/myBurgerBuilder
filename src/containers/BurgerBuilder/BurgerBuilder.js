@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import * as burgerbuilderactions from '../../store/actions/index';
+import * as burgerbuilderactions from "../../store/actions/index";
 import Burger from "../../components/Burger/Burger";
 import BuildControls from "../../components/Burger/BuildControls/BuildControls";
 import Modal from "../../components/UI/Modal/Modal";
@@ -10,8 +10,6 @@ import axios from "../../axios-orders";
 import witherrorhandler from "../../hoc/witherrorhandler/witherrorhandler";
 
 class BurgerBuilder extends Component {
- 
-
   state = {
     purchaseable: false,
     purchasing: false,
@@ -26,12 +24,14 @@ class BurgerBuilder extends Component {
     this.setState({ purchasing: false });
   };
 
-  componentDidMount() {
-  }
+  componentDidMount() {}
   purchansecontinuehandler = () => {
     // alert("You Continue!");
-
-    this.props.history.push("/Checkout");
+    if(this.props.isAuth){
+      this.props.history.push("/Checkout");
+    }else{
+      this.props.history.push("/auth");
+    }
   };
 
   updatepurchaseablehandler = (ingredients) => {
@@ -74,6 +74,7 @@ class BurgerBuilder extends Component {
             updatehandler={this.updatepurchaseablehandler(this.props.ings)}
             disabled={disableinfo}
             orderd={this.purchasehandler}
+            isAuth={this.props.isAuth}
           ></BuildControls>
         </div>
       </React.Fragment>
@@ -82,15 +83,24 @@ class BurgerBuilder extends Component {
 }
 
 const mapStateToProps = (state) => {
-  return { ings: state.burgerbuilder.ingredients ,price:state.burgerbuilder.totalprice };
+  return {
+    ings: state.burgerbuilder.ingredients,
+    price: state.burgerbuilder.totalprice,
+    isAuth :state.auth.idToken
+  };
 };
 
-const mapDispatchToProps = (dispatch)=>{
+const mapDispatchToProps = (dispatch) => {
   return {
-    onIngredientAdd:(name)=> dispatch(burgerbuilderactions.addingredient(name)),
-    onIngredientDel:(name)=> dispatch(burgerbuilderactions.delingredient(name)),
-    onInitPurchase : ()=> dispatch(burgerbuilderactions.purchaseinit())
-  }
-}
+    onIngredientAdd: (name) =>
+      dispatch(burgerbuilderactions.addingredient(name)),
+    onIngredientDel: (name) =>
+      dispatch(burgerbuilderactions.delingredient(name)),
+    onInitPurchase: () => dispatch(burgerbuilderactions.purchaseinit()),
+  };
+};
 
-export default connect(mapStateToProps,mapDispatchToProps)(witherrorhandler(BurgerBuilder, axios));
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(witherrorhandler(BurgerBuilder, axios));
